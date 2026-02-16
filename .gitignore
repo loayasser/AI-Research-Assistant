@@ -1,0 +1,9 @@
+# Ignore the actual PDF files you upload
+uploads/
+
+# Ignore Python's internal cache files
+__pycache__/
+*.pyc
+
+# Ignore local environment variables (if you create them later)
+.env
