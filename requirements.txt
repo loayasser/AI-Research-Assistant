@@ -3,3 +3,10 @@ uvicorn
 sqlalchemy
 psycopg2-binary
 python-multipart
+pymupdf
+# Specific AI versions for stability
+sentence-transformers==3.0.1
+langchain-text-splitters
+numpy<2.0.0
+pgvector
+google-genai

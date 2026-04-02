@@ -1,12 +1,24 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.pool import StaticPool
 import os
 
-# This URL tells SQLAlchemy to talk to the 'db' service we defined in Docker Compose
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@db:5432/research_db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite://")
+IS_SQLITE = DATABASE_URL.startswith("sqlite")
 
-engine = create_engine(DATABASE_URL)
+engine_kwargs = (
+    {
+        "connect_args": {"check_same_thread": False},
+        "poolclass": StaticPool,
+    }
+    if DATABASE_URL == "sqlite://"
+    else (
+        {"connect_args": {"check_same_thread": False}}
+        if IS_SQLITE
+        else {}
+    )
+)
+engine = create_engine(DATABASE_URL, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

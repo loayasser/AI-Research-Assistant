@@ -1,13 +1,17 @@
 services:
   db:
-    image: postgres:15
+    image: pgvector/pgvector:pg15
+    container_name: research-assistant-db-1
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: research_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
-    healthcheck:
+    healthcheck: # Added this to make "service_healthy" work correctly
       test: ["CMD-SHELL", "pg_isready -U user -d research_db"]
       interval: 5s
       timeout: 5s
@@ -16,11 +20,16 @@ services:
   api:
     build: .
     volumes:
-      - ./uploads:/app/uploads  # Link local folder to container folder
+      - ./uploads:/app/uploads
     ports:
       - "8000:8000"
+    env_file:
+      - .env.local
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/research_db
     depends_on:
       db:
         condition: service_healthy
+
+volumes:
+  postgres_data:

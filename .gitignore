@@ -7,3 +7,9 @@ __pycache__/
 
 # Ignore local environment variables (if you create them later)
 .env
+.env.local
+.venv/
+.tmp/
+write_test.txt
+research.db
+research.db-journal
